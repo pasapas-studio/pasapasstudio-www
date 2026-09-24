@@ -49,6 +49,40 @@
     © <span id="y">2026</span> Pas à Pas Studio LLC. All rights reserved.
     <nav><a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a></nav>
   </footer>
-  <script>document.getElementById('y').textContent = new Date().getFullYear();</script>
+  <script>
+    document.getElementById('y').textContent = new Date().getFullYear();
+
+    // Tagline arrives one word at a time.
+    const tagline = document.querySelector('.tagline');
+    tagline.innerHTML = tagline.textContent.trim().split(/\s+/)
+      .map((w, i) => `<span class="w" style="animation-delay:${1.2 + i * 0.12}s">${w}</span>`)
+      .join(' ');
+
+    // Pointer leaves a trail of footprints ("pas" = footstep).
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const STRIDE = 34, SPREAD = 6;
+      const svg = '<svg viewBox="0 0 10 20"><ellipse cx="5" cy="6" rx="4" ry="5.5"/><ellipse cx="5" cy="16" rx="3" ry="3.5"/></svg>';
+      let last = null, left = true;
+      addEventListener('pointermove', (e) => {
+        if (!last) { last = { x: e.clientX, y: e.clientY }; return; }
+        const dx = e.clientX - last.x, dy = e.clientY - last.y;
+        const dist = Math.hypot(dx, dy);
+        if (dist < STRIDE) return;
+        const a = Math.atan2(dy, dx);
+        const side = left ? -SPREAD : SPREAD;
+        const x = e.clientX + Math.cos(a + Math.PI / 2) * side;
+        const y = e.clientY + Math.sin(a + Math.PI / 2) * side;
+        const el = document.createElement('div');
+        el.className = 'print';
+        el.innerHTML = svg;
+        el.firstChild.style.cssText = 'width:100%;height:100%;display:block';
+        el.style.transform = `translate(${x}px, ${y}px) rotate(${a + Math.PI / 2}rad)`;
+        el.addEventListener('animationend', () => el.remove());
+        document.body.appendChild(el);
+        left = !left;
+        last = { x: e.clientX, y: e.clientY };
+      }, { passive: true });
+    }
+  </script>
 </body>
 </html>

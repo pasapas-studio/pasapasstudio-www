@@ -85,3 +85,27 @@ footer {
 footer a { color: var(--muted); }
 footer nav { display: inline; margin-left: 12px; }
 
+
+/* Fun: step-by-step motion */
+.mark path { stroke-dasharray: 40; stroke-dashoffset: 40; animation: draw 1s steps(5, end) 0.2s forwards; }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+
+.tagline .w { display: inline-block; opacity: 0; transform: translateY(8px); animation: step-in 0.35s ease-out forwards; }
+@keyframes step-in { to { opacity: 1; transform: none; } }
+
+.print {
+  position: fixed;
+  left: 0; top: 0;
+  width: 10px; height: 20px;
+  margin: -10px 0 0 -5px;
+  pointer-events: none;
+  fill: var(--accent);
+  animation: fade 1.8s ease-in forwards;
+  z-index: 10;
+}
+@keyframes fade { from { opacity: 0.55; } to { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .mark path { animation: none; stroke-dashoffset: 0; }
+  .tagline .w { animation: none; opacity: 1; transform: none; }
+}
